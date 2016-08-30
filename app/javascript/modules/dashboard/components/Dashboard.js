@@ -1,38 +1,74 @@
-import CONSTANTS from '../../../constants/app-constant';
+import UI_MESSAGES from '../../../constants/ui-message';
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import Utility from '../../../mixins/basicUtils';
 import GitHubService from '../../../services/github';
 import UI from '../../../mixins/ui';
+import UserWidget from './userWidget'
+import PaginationTab from './paginationTab'
 
-var Dashboard = React.createClass({
-  mixins: [UI, GitHubService],
+export class Dashboard extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { users: [], showSince: 1 };
+    this.showUsers = this.showUsers.bind(this);
+  }
 
   componentDidMount() {
-    this.getUsers()
-      .then((result) => {})
-      .catch((error) => this.notify('error', error.responseText));
-  },
+    this.fetchGitUsers();
+  }
 
+  fetchGitUsers(showSince) {
+    GitHubService.getUsers(showSince)
+      .then((result) => {
+        this.setState({
+          users: result || [],
+          showSince: this.getUpdatedShowSince(result)
+        });
+      })
+      .catch((error) => UI.notify('error', UI_MESSAGE.users.error.fetch));
+  }
+  
+  getUpdatedShowSince(result) {
+    return result && result.length &&
+      result[result.length - 1] &&
+      result[result.length - 1].id;
+  }
+  
+  getNextBatch() {
+    this.fetchUsers(this.state.showSince);
+  }
+
+  getPrevBatch() {
+    var firstIdOfBatch = this.state.users && this.state.users[0] && this.state.users[0].id;
+    var showSince = Number(firstIdOfBatch - GitHubService.getPerPageRecordCount());
+    if(showSince) {
+      this.fetchUsers(showSince);
+    }
+  }
+  
+  showUsers() {
+    return this.state.users.map((user) => {
+      return (<UserWidget user = {user} />);
+    });
+  }
+  
+  showPagination() {
+    return <PaginationTab nextAction={this.getNextBatch}
+      prevAction={this.getPrevBatch} pageAction={this.getBatchNumber} />
+  }
+  
   render() {
     return (
-      <div className="panel panel-default">
+      <div className="panel panel-primary">
         <div className="panel-heading">
-          <h3 className="panel-title">GitHub Search</h3>
+          <h3 className="panel-title">GitHub Users</h3>
         </div>
         <div className="panel-body">
-          <div className="col-lg-6">
-            <div className="input-group">
-              <input type="text" className="form-control" placeholder="Type username...">
-              <span className="input-group-btn">
-                <button className="btn btn-primary" type="button">Search</button>
-              </span>
-            </div>
-          </div>
+          {this.showUsers()}
+          {this.showPaginationTab()}
         </div>
       </div>
     );
-  },
-});
-
-export default Dashboard;
+  }
+};
