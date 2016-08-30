@@ -1,5 +1,5 @@
 export const UI_MESSAGES = {
-  user: {
+  users: {
     error: {
       fetch: 'Some error occured in fetching user list'
     }
