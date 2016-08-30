@@ -36,14 +36,14 @@ export class Dashboard extends React.Component {
   }
   
   getNextBatch() {
-    this.fetchUsers(this.state.showSince);
+    this.fetchGitUsers(this.state.showSince);
   }
 
   getPrevBatch() {
     var firstIdOfBatch = this.state.users && this.state.users[0] && this.state.users[0].id;
     var showSince = Number(firstIdOfBatch - GitHubService.getPerPageRecordCount());
     if(showSince) {
-      this.fetchUsers(showSince);
+      this.fetchGitUsers(showSince);
     }
   }
   
