@@ -13,7 +13,6 @@ const API = {
 const PER_PAGE_RECORDS = 10;
 
 const GithubService = {
-  typeCount: 2,
   getUsers: (showSince, perPageRecords) => {
     return http.performGet(GIT_BASE_URL + API.users,
       { showSince: showSince,  per_page: perPageRecords || PER_PAGE_RECORDS})
