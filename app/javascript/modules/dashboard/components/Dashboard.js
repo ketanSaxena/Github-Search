@@ -31,8 +31,7 @@ export class Dashboard extends React.Component {
   
   getUpdatedShowSince(result) {
     return result && result.length &&
-      result[result.length - 1] &&
-      result[result.length - 1].id;
+      _.last(result) && _.last(result).id;
   }
   
   getNextBatch() {
@@ -54,8 +53,8 @@ export class Dashboard extends React.Component {
   }
   
   showPagination() {
-    return <PaginationTab nextAction={this.getNextBatch}
-      prevAction={this.getPrevBatch} pageAction={this.getBatchNumber} />
+    return (<PaginationTab nextAction={this.getNextBatch}
+      prevAction={this.getPrevBatch} pageAction={this.getBatchNumber} />)
   }
   
   render() {
