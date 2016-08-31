@@ -17,7 +17,8 @@ const GithubService = {
   */
   getUsers: (showSince, perPageRecords) => {
     return http.performGet(GIT_BASE_URL + API.users,
-      { showSince: showSince,  per_page: perPageRecords || PER_PAGE_RECORDS})
+      { showSince: showSince,  per_page: perPageRecords || PER_PAGE_RECORDS},
+      http.requestType.get)
   },
   /**
   * method to return default per page records count.
