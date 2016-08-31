@@ -1,46 +1,29 @@
-import CONSTANTS from '../constants/app-constant';
-import Local from './sessionUtils';
-import Authorization from '../services/authorization';
-
 var http = (function () {
 
-  var _defaultHandler = (error) => UI.notify('error', error.statusText)
-
+  var _defaultHandler = (error) => UI.notify('error', error)
 
   return {
+    requestType: {
+      get: 'GET',
+      post: 'POST',
+      put: 'PUT'
+    },
 
-    performGet: (queryParams, url) => {
+    makeRequest: (url, queryParams, type) => {
       return new Promise(function resolver(resolve, reject) {
-        $.ajax({
-          type: 'GET',
+        var params = {
+          type: type || 'GET',
           data: queryParams || {},
-          url: url || CONSTANTS.APP.apiBaseUrl,
+          url: url,
           async: true,
           crossDomain: true,
           success: (result) => resolve(result),
           error: (err) => reject ? reject(err) : _defaultHandler(err)
-        });
-      });
-    },
-
-    performPost: (body, url) => {
-      return new Promise(function resolver(resolve, reject){
-        $('.loaderOverlay').show();
-        $.ajax({
-          type: 'POST',
-          data: body,
-          url: url || CONSTANTS.APP.apiBaseUrl,
-          async: true,
-          dataType: "json",
-          success: (result) => {
-            resolve(result);
-            $('.loaderOverlay').hide();
-          },
-          error: (err) => {
-            $('.loaderOverlay').hide();
-            reject ? reject(err) : _defaultHandler(err)
-          }
-        });
+        }
+        if(type==='POST') {
+          params.dataType = 'json'
+        }
+        $.ajax(params);
       });
     }
   };
